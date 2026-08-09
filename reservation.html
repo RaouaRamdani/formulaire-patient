@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulaire Patient</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .form-card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      min-height: 100vh;
+
+    }
+
+    .form-card h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #444;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    .date-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .error-message {
+      color: #d9534f;
+      font-size: 13px;
+      margin-top: -10px;
+      margin-bottom: 15px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-confirm {
+      background-color: #007bff;
+      color: #ffffff;
+    }
+
+    .btn-confirm:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-reset {
+      background-color: #6c757d;
+      color: #ffffff;
+    }
+
+    .btn-reset:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h2>Informations du Patient</h2>
+    
+    <form id="patientForm">
+      <!-- Name Patient -->
+      <div class="form-group">
+        <label for="patientName">Nom du Patient</label>
+        <input type="text" id="patientName" name="patientName" placeholder="Ex: Jean Dupont" required>
+      </div>
+
+      <!-- Mail -->
+      <div class="form-group">
+        <label for="email">Adresse E-mail</label>
+        <input type="email" id="email" name="email" placeholder="exemple@mail.com" required>
+      </div>
+
+      <!-- ID -->
+      <div class="form-group">
+        <label for="patientId">Identifiant (ID)</label>
+        <input type="text" id="patientId" name="patientId" placeholder="Ex: ID-98765" required>
+      </div>
+
+      <!-- Procedure (Choix multiple) -->
+      <div class="form-group">
+        <label for="procedure">Procédure</label>
+        <select id="procedure" name="procedure" multiple required style="height: 80px;">
+          <option value="liposuction">Liposuction</option>
+          <option value="tummy_tuck">Tummy Tuck</option>
+          <option value="breast_lift">Breast Lift</option>
+        </select>
+        <small style="color: #666; font-size: 11px;">(Maintenez Ctrl ou Cmd pour sélectionner plusieurs choix)</small>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-group">
+        <label>Dates du séjour et intervention</label>
+        <div class="date-grid">
+          <div>
+            <label for="arrivalDate" style="font-weight: normal; font-size: 12px;">Arrivée</label>
+            <input type="date" id="arrivalDate" name="arrivalDate" required>
+          </div>
+          <div>
+            <label for="operationDate" style="font-weight: normal; font-size: 12px;">Opération</label>
+            <input type="date" id="operationDate" name="operationDate" required>
+          </div>
+          <div>
+            <label for="departureDate" style="font-weight: normal; font-size: 12px;">Départ</label>
+            <input type="date" id="departureDate" name="departureDate" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Message d'erreur pour la chronologie des dates -->
+      <div id="dateError" class="error-message"></div>
+
+      <!--choix de la devise-->
+      <div class="form-group">
+        <label for="currency">Devise</label>
+        <select id="currency" name="currency" required>
+          <option value="" disabled selected>-please choose an option-</option>
+          <option value="EUR">Euro (€)</option>
+          <option value="USD">Dollar ($)</option>
+          <option value="GBP">Pound (£)</option>
+          <option value="TRY">TL (₺)</option>
+        </select>
+      </div>
+
+      <!-- Total Amount -->
+      <div class="form-group">
+        <label for="totalAmount">Montant Total (€)</label>
+        <input type="number" id="totalAmount" name="totalAmount" step="0.01" min="0" placeholder="0.00" required>
+      </div>
+
+      <!-- Language -->
+      <div class="form-group">
+        <label for="language">Langue</label>
+        <select id="Langue" name="Langue" required>
+            <option value=""disabled selected> -please choose a language-</option>
+            <option value="FR"> français</option>
+            <option value="EN"> english</option>
+        </select>
+      </div>
+
+      <!-- Boutons -->
+      <div class="button-group">
+        <button type="submit" class="btn-confirm">Confirmer</button>
+        <button type="reset" class="btn-reset" id="resetBtn">Effacer</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('patientForm');
+    const arrivalInput = document.getElementById('arrivalDate');
+    const operationInput = document.getElementById('operationDate');
+    const departureInput = document.getElementById('departureDate');
+    const dateError = document.getElementById('dateError');
+
+    // Validation de la chronologie des dates
+    form.addEventListener('submit', function(event) {
+      const arrival = new Date(arrivalInput.value);
+      const operation = new Date(operationInput.value);
+      const departure = new Date(departureInput.value);
+
+      dateError.style.display = 'none';
+
+      if (arrival >= operation) {
+        event.preventDefault();
+        dateError.textContent = "La date d'arrivée doit être antérieure à la date de l'opération.";
+        dateError.style.display = 'block';
+        return;
+      }
+
+      if (operation >= departure) {
+        event.preventDefault();
+        dateError.textContent = "La date de l'opération doit être antérieure à la date de départ.";
+        dateError.style.display = 'block';
+        return;
+      }
+
+      alert("Formulaire validé avec succès !");
+    });
+
+    // Effacer le message d'erreur lors de la réinitialisation
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      dateError.style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
