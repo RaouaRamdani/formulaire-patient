@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const { jsPDF } = require('jspdf');
 
 const app = express();
-const PORT = 3000 || process.env.PORT ;
+const PORT =  process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
