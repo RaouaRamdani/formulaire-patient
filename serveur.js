@@ -9,6 +9,11 @@ const PORT =  process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static(__dirname));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'reservation.html'));
+});
+
 // 1. Configuration du service d'envoi d'e-mail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
