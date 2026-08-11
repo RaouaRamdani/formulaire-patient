@@ -198,8 +198,8 @@
       <!-- Language -->
       <div class="form-group">
         <label for="language">Langue</label>
-        <select id="Langue" name="Langue" required>
-            <option value=""disabled selected> -please choose a language-</option>
+        <select id="language" name="language" required>
+            <option value="" disabled selected> -please choose a language-</option>
             <option value="FR"> français</option>
             <option value="EN"> english</option>
         </select>
@@ -221,35 +221,57 @@
     const dateError = document.getElementById('dateError');
 
     // Validation de la chronologie des dates
-    form.addEventListener('submit', function(event) {
-      const arrival = new Date(arrivalInput.value);
-      const operation = new Date(operationInput.value);
-      const departure = new Date(departureInput.value);
+    form.addEventListener('submit', async function(event) {
+  event.preventDefault(); // Empêche le rechargement de la page
 
-      dateError.style.display = 'none';
+  const arrival = new Date(arrivalInput.value);
+  const operation = new Date(operationInput.value);
+  const departure = new Date(departureInput.value);
 
-      if (arrival >= operation) {
-        event.preventDefault();
-        dateError.textContent = "La date d'arrivée doit être antérieure à la date de l'opération.";
-        dateError.style.display = 'block';
-        return;
-      }
+  dateError.style.display = 'none';
 
-      if (operation >= departure) {
-        event.preventDefault();
-        dateError.textContent = "La date de l'opération doit être antérieure à la date de départ.";
-        dateError.style.display = 'block';
-        return;
-      }
+  // Validation des dates
+  if (arrival >= operation || operation >= departure) {
+    dateError.textContent = "Veuillez vérifier la chronologie des dates.";
+    dateError.style.display = 'block';
+    return;
+  }
 
-      alert("Formulaire validé avec succès !");
+  // 1. Récupération des procédures sélectionnées (choix multiple)
+  const selectedProcedures = Array.from(document.getElementById('procedure').selectedOptions)
+   .map(option => option.text);
+
+  // 2. Assemblage des données dans un objet JSON
+  const formData = {
+    patientName: document.getElementById('patientName').value,
+    email: document.getElementById('email').value,
+    patientId: document.getElementById('patientId').value,
+    procedures: selectedProcedures,
+    arrivalDate: arrivalInput.value,
+    operationDate: operationInput.value,
+    departureDate: departureInput.value,
+    currency: document.getElementById('currency').value,
+    totalAmount: document.getElementById('totalAmount').value,
+    language: document.getElementById('language').value
+  };
+
+  // 3. Envoi des données vers ton serveur Node.js
+  try {
+    const response = await fetch('http://localhost:3000/api/patient', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
     });
 
-    // Effacer le message d'erreur lors de la réinitialisation
-    document.getElementById('resetBtn').addEventListener('click', function() {
-      dateError.style.display = 'none';
-    });
-  </script>
+    const result = await response.json();
+    alert(result.message); // Affiche "Données bien reçues !"
+  } catch (error) {
+    console.error("Erreur d'envoi :", error);
+    alert("Impossible de contacter le serveur.");
+  }
+});
+
+ </script>
 
 </body>
 </html>
