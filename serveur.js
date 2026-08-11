@@ -28,7 +28,7 @@ app.post('/api/patient', async (req, res) => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text("Fiche de Réservation Patient", 20, 20);
+    doc.text(`Fiche de Réservation patient ${data.patientId}`, 20, 20);
 
     doc.setFontSize(12);
     doc.text(`Nom du Patient : ${data.patientName}`, 20, 40);
@@ -46,8 +46,8 @@ app.post('/api/patient', async (req, res) => {
     const mailOptions = {
       from: 'ton.email@gmail.com',         // Ton adresse
       to: data.email,                    // L'adresse saisie dans le formulaire !
-      subject: 'Confirmation de votre réservation médicale',
-      text: `Bonjour ${data.patientName},\n\nVeuillez trouver ci-joint le récapitulatif PDF de votre réservation.\n\nCordialement,`,
+      subject: 'Confirmation de réservation PDF',
+      text: `\n\nVeuillez trouver ci-joint le récapitulatif PDF de votre réservation.\n\nCordialement,`,
       attachments: [
         {
           filename: `Reservation_${data.patientName.replace(/\s+/g, '_')}.pdf`,
@@ -59,7 +59,7 @@ app.post('/api/patient', async (req, res) => {
 
     // --- C. Envoi de l'e-mail ---
     await transporter.sendMail(mailOptions);
-    console.log("E-mail envoyé avec succès !");
+    console.log("E-mail envoyé avec succès à :", data.email);
 
     res.json({ success: true, message: "Réservation enregistrée et e-mail envoyé avec succès !" });
 
@@ -71,4 +71,4 @@ app.post('/api/patient', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Serveur actif sur http://localhost:${PORT}`);
-});
+}); 
