@@ -19,6 +19,10 @@ const transporter = nodemailer.createTransport({
 });
 
 // 2. Route de réception et de traitement
+app.get('/', (req, res) => {
+  res.send('Serveur actif et prêt à recevoir des réservations.');
+});
+
 app.post('/api/patient', async (req, res) => {
   try {
     const data = req.body;
