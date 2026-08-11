@@ -2,24 +2,25 @@ const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { jsPDF } = require('jspdf');
+const path = require('path');
 
 const app = express();
-const PORT =  process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 
-app.use(express.static(__dirname));
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'reservation.html'));
+  res.sendFile(path.join(__dirname, 'reservation.html'));
 });
 
 // 1. Configuration du service d'envoi d'e-mail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'raouaram@gmail.com',         
-    pass: 'oubw ruof wows psqt'         
+    user: 'raouaram@gmail.com',
+    pass: 'oubw ruof wows psqt'
   }
 });
 

@@ -257,7 +257,7 @@
 
   // 3. Envoi des données vers ton serveur Node.js
   try {
-    const response = await fetch('https://formulaire-reservation-6o41.onrender.com/api/patient', {
+    const response = await fetch('https://formulaire-reservation-6o41.onrender.com ', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
