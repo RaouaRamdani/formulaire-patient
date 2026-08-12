@@ -1,18 +1,24 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { jsPDF } = require('jspdf');
-const path = require('path');
+
+
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'reservation.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Serveur démarré localement sur : http://localhost:${PORT}`);
 });
 
 // 1. Configuration du service d'envoi d'e-mail
@@ -29,7 +35,7 @@ app.get('/', (req, res) => {
   res.send('Serveur actif et prêt à recevoir des réservations.');
 });
 
-app.post('/api/patient', async (req, res) => {
+app.post('/', async (req, res) => {
   try {
     const data = req.body;
     console.log("Traitement du patient :", data.patientName);
@@ -78,7 +84,3 @@ app.post('/api/patient', async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur lors de l'envoi de l'e-mail." });
   }
 });
-
-app.listen(PORT, () => {
-  console.log(`Serveur actif sur http://localhost:${PORT}`);
-}); 

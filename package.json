@@ -2,7 +2,7 @@
   "name": "reservation",
   "version": "1.0.0",
   "description": "",
-  "main": "serveur.js",
+  "main": "reservation.html",
   "scripts": {
     "start": "node serveur.js",
     "test": "echo \"Error: no test specified\" && exit 1"
