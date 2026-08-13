@@ -2,80 +2,50 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const { jsPDF } = require('jspdf');
-
-
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
+// Augmentation de la limite JSON pour pouvoir recevoir le PDF en Base64
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname));
 
+// Route principale pour afficher la page de réservation
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'reservation.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`Serveur démarré localement sur : http://localhost:${PORT}`);
-});
-
-// 1. Configuration du service d'envoi d'e-mail
+// Configuration du service Nodemailer avec tes identifiants Gmail
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'raouaram@gmail.com',
-    pass: 'oubw ruof wows psqt'
+    pass: 'oubw ruof wows psqt' // Ton mot de passe d'application Gmail
   }
 });
 
-// 2. Route de réception et de traitement
-app.get('/', (req, res) => {
-  res.send('Serveur actif et prêt à recevoir des réservations.');
-});
-
+// Route POST pour recevoir le PDF et l'envoyer par e-mail
 app.post('/', async (req, res) => {
   try {
-    const data = req.body;
-    console.log("Traitement du patient :", data.patientName);
+    const { patientName, email, pdfBase64 } = req.body;
+    console.log("Traitement du patient :", patientName);
 
-    // --- A. Génération du PDF ---
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-    doc.text(`Fiche de Réservation patient ${data.patientId}`, 20, 20);
-
-    doc.setFontSize(12);
-    doc.text(`Nom du Patient : ${data.patientName}`, 20, 40);
-    doc.text(`ID Patient : ${data.patientId}`, 20, 50);
-    doc.text(`Procédures : ${data.procedures.join(', ')}`, 20, 60);
-    doc.text(`Date d'arrivée : ${data.arrivalDate}`, 20, 70);
-    doc.text(`Date d'opération : ${data.operationDate}`, 20, 80);
-    doc.text(`Date de départ : ${data.departureDate}`, 20, 90);
-    doc.text(`Montant Total : ${data.totalAmount} ${data.currency}`, 20, 100);
-
-    // Conversion du PDF en Buffer (format lisible par Nodemailer)
-    const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
-
-    // --- B. Options de l'e-mail ---
     const mailOptions = {
-      from: 'ton.email@gmail.com',         // Ton adresse
-      to: data.email,                    // L'adresse saisie dans le formulaire !
+      from: 'raouaram@gmail.com',
+      to: email,
       subject: 'Confirmation de réservation PDF',
-      text: `\n\nVeuillez trouver ci-joint le récapitulatif PDF de votre réservation.\n\nCordialement,`,
+      text: `Bonjour ${patientName},\n\nVeuillez trouver ci-joint le récapitulatif PDF de votre réservation.\n\nCordialement,`,
       attachments: [
         {
-          filename: `Reservation_${data.patientName.replace(/\s+/g, '_')}.pdf`,
-          content: pdfBuffer,
-          contentType: 'application/pdf'
+          filename: `Reservation_${patientName.replace(/\s+/g, '_')}.pdf`,
+          path: pdfBase64 // Nodemailer gère directement l'URL Base64 envoyée par le client
         }
       ]
     };
 
-    // --- C. Envoi de l'e-mail ---
     await transporter.sendMail(mailOptions);
-    console.log("E-mail envoyé avec succès à :", data.email);
+    console.log("E-mail envoyé avec succès à :", email);
 
     res.json({ success: true, message: "Réservation enregistrée et e-mail envoyé avec succès !" });
 
@@ -83,4 +53,8 @@ app.post('/', async (req, res) => {
     console.error("Erreur lors du traitement :", error);
     res.status(500).json({ success: false, message: "Erreur lors de l'envoi de l'e-mail." });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Serveur démarré localement sur : http://localhost:${PORT}`);
 });
