@@ -5,7 +5,11 @@
   "main": "reservation.html",
   "scripts": {
     "start": "node serveur.js",
+    "dev": "node serveur.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "repository": {
     "type": "git",
