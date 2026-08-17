@@ -606,8 +606,13 @@ form.addEventListener('submit', async function(event) {
       body: JSON.stringify(formData)
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `HTTP ${response.status}`);
+    }
+
     const result = await response.json();
-    alert(result.message);
+    alert(result.message || 'Réservation envoyée.');
 
   } catch (error) {
     console.error("Erreur d'envoi :", error);
