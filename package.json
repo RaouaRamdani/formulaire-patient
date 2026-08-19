@@ -13,16 +13,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RaouaRamdani/formulaire-patient-.git"
+    "url": "git+https://github.com/RaouaRamdani/formulaire-patient.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/RaouaRamdani/formulaire-patient-/issues"
+    "url": "https://github.com/RaouaRamdani/formulaire-patient/issues"
   },
-  "homepage": "https://github.com/RaouaRamdani/formulaire-patient-#readme",
+  "homepage": "https://github.com/RaouaRamdani/formulaire-patient#readme",
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",

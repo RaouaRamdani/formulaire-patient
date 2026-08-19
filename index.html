@@ -703,19 +703,53 @@ const pdfOptions = {
   margin: [12, 12, 12, 12],
   filename: 'Reservation.pdf',
   image: { type: 'jpeg', quality: 0.98 },
-  html2canvas: { scale: 2, zindwWidth:680 },
+  html2canvas: {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff'
+  },
   jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
 };
 
-// Fonction de prévisualisation dans un nouvel onglet
-function previewPDF() {
+async function generatePdf(outputType) {
   buildPdfTemplate();
-  const element = document.getElementById('pdf-template');
 
-  html2pdf().set(pdfOptions).from(element).toPdf().output('blob').then(function (pdfBlob) {
+  const element = document.getElementById('pdf-template');
+  const originalParent = element.parentElement;
+  const originalNextSibling = element.nextSibling;
+
+  // On détache le template et on le place directement dans <body>,
+  // sans aucun wrapper positionné en absolute/fixed autour de lui.
+  document.body.appendChild(element);
+  element.style.position = 'static';
+  element.style.margin = '0';
+
+  window.scrollTo(0, 0);
+
+  try {
+    return await html2pdf().set(pdfOptions).from(element).toPdf().output(outputType);
+  } finally {
+    // On remet le template exactement à sa place d'origine
+    if (originalNextSibling) {
+      originalParent.insertBefore(element, originalNextSibling);
+    } else {
+      originalParent.appendChild(element);
+    }
+    element.style.position = '';
+    element.style.margin = '0';
+  }
+}
+
+// Fonction de prévisualisation dans un nouvel onglet
+async function previewPDF() {
+  try {
+    const pdfBlob = await generatePdf('blob');
     const pdfUrl = URL.createObjectURL(pdfBlob);
     window.open(pdfUrl, '_blank');
-  });
+  } catch (error) {
+    console.error('Erreur de génération du PDF :', error);
+    alert('Impossible de générer le PDF.');
+  }
 }
 
 // Soumission du formulaire et envoi de l'e-mail
@@ -735,12 +769,9 @@ form.addEventListener('submit', async function(event) {
     return;
   }
 
-  buildPdfTemplate();
-  const element = document.getElementById('pdf-template');
-
   try {
     // Génération du PDF en base64
-    const pdfBase64 = await html2pdf().set(pdfOptions).from(element).toPdf().output('datauristring');
+    const pdfBase64 = await generatePdf('datauristring');
 
     const formData = {
       patientName: document.getElementById('patientName').value,
@@ -769,9 +800,9 @@ form.addEventListener('submit', async function(event) {
 });
 </script>
 
-<div style="position: absolute; left: -9999px; top: 0;">
-  <div id="pdf-template" style="width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; background: #ffffff; font-family: Arial, sans-serif; color: #333333; ">
-    
+<div style="position: absolute; left: -10000px; top: 0; width: 180mm; height: auto; overflow: visible; visibility: visible; pointer-events: none;">
+  
+  <div id="pdf-template" style="width: 180mm; padding: 12mm; box-sizing: border-box; background: #ffffff; font-family: Arial, sans-serif; color: #333333; margin: 0;">
     <!-- En-tête : Titre & Badge -->
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border-bottom: 2px solid #1a365d; padding-bottom: 12px;">
       <tr>
