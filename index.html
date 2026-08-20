@@ -774,10 +774,26 @@ form.addEventListener('submit', async function(event) {
     const pdfBase64 = await generatePdf('datauristring');
 
     const formData = {
-      patientName: document.getElementById('patientName').value,
-      email: document.getElementById('email').value,
-      pdfBase64: pdfBase64
-    };
+  patientName: document.getElementById('patientName').value,
+  email: document.getElementById('email').value,
+  passportNo: document.getElementById('passportNo').value,
+  patientAge: document.getElementById('patientAge').value,
+  patientHeight: document.getElementById('patientHeight').value,
+  patientWeight: document.getElementById('patientWeight').value,
+  patientCountry: document.getElementById('patientCountry').value,
+  flightArrivalCode: document.getElementById('flightArrivalCode').value,
+  flightDepartureCode: document.getElementById('flightDepartureCode').value,
+  procedure: Array.from(document.getElementById('procedure').selectedOptions).map(o => o.text),
+  diagnosticNumber: document.getElementById('diagnosticNumber').value,
+  arrivalDate: document.getElementById('arrivalDate').value,
+  operationDate: document.getElementById('operationDate').value,
+  departureDate: document.getElementById('departureDate').value,
+  currency: document.getElementById('currency').value,
+  totalAmount: document.getElementById('totalAmount').value,
+  paidAmount: document.getElementById('paidAmount').value,
+  remainingAmount: document.getElementById('remainingAmount').value,
+  pdfBase64: pdfBase64
+};
 
     const response = await fetch('/api', {
       method: 'POST',
